@@ -12,7 +12,9 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public GameObject GameOverText;
-    
+    public Text gameOverTextMesh;
+
+
     private bool m_Started = false;
     private int m_Points;
     
@@ -22,6 +24,8 @@ public class MainManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        UpdateTexts();
+
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -55,6 +59,13 @@ public class MainManager : MonoBehaviour
         }
         else if (m_GameOver)
         {
+            //If the score is better then the previous best, change the best score and save
+            if (m_Points > PointsManager.instance.scoreBest)
+            {
+                PointsManager.instance.ChangeBestScore(PointsManager.instance.username, m_Points);
+                UpdateTexts();
+            }
+
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -72,5 +83,15 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+    }
+
+    private void UpdateTexts()
+    {
+        gameOverTextMesh.text = "Best Score: " + PointsManager.instance.usernameBest + " : " + PointsManager.instance.scoreBest;
+    }
+
+    public void OpenMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 }
